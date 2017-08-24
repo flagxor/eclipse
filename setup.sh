@@ -6,7 +6,7 @@ fi
 
 mkdir -p data
 curl https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Equirectangular_projection_SW.jpg/1024px-Equirectangular_projection_SW.jpg -o data/map.jpg
-convert data/map.jpg -depth 8 -format RGBA -size 1024x1024 data/map.rgba
+convert data/map.jpg -depth 8 -format BGRA -sample 1024x1024\! data/map.bgra
 
 cd data
 for x in {1550..2550..100}; do
