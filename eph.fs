@@ -1,22 +1,6 @@
 s" data/jpleph.blk" open-blocks
 
 variable eph-planet
-: planet create ( start coefs secs comps -- ) , , , 1- , does> eph-planet ! ;
-   3 14 4 3 planet mercury
- 171 10 2 3 planet venus
- 231 13 2 3 planet earth
- 309 11 1 3 planet mars
- 342  8 1 3 planet jupiter
- 366  7 1 3 planet saturn
- 387  6 1 3 planet uranus
- 405  6 1 3 planet neptune
- 423  6 1 3 planet pluto
- 441 13 8 3 planet moon
- 753 11 2 3 planet sun
- 819 10 4 2 planet earth-nuations
- 899 10 4 3 planet moon-librations
-\ 1019  0 0 3 planet moon-angv
-\ 1019  0 0 1 planet tt-tdb
 : eph-offset eph-planet @ 3 cells + @ ;
 : eph-coefficients eph-planet @ 2 cells + @ ;
 : eph-segments eph-planet @ 1 cells + @ ;
@@ -83,9 +67,41 @@ variable cheb-segment
   loop
   drop
 ;
+
 : eph ( -- f* )
    0 eph-chunks find-chunk
    cheb-init-t
    cheb-components-init
    eph-components 0 do i eph-interp loop
 ;
+
+: planet create ( start coefs secs comps -- ) , , , 1- ,
+  does> eph-planet ! eph ;
+   3 14 4 3 planet mercury
+ 171 10 2 3 planet venus
+ 231 13 2 3 planet earth
+ 309 11 1 3 planet mars
+ 342  8 1 3 planet jupiter
+ 366  7 1 3 planet saturn
+ 387  6 1 3 planet uranus
+ 405  6 1 3 planet neptune
+ 423  6 1 3 planet pluto
+ 441 13 8 3 planet moon
+ 753 11 2 3 planet sun
+ 819 10 4 2 planet earth-nuations
+ 899 10 4 3 planet moon-librations
+\ 1019  0 0 3 planet moon-angv
+\ 1019  0 0 1 planet tt-tdb
+
+( vector ops )
+fvariable vtx fvariable vty fvariable vtz
+fvariable tsin fvariable tcos
+: >vt vtz f! vty f! vtx f! ;
+: v- >vt vtz f@ f- frot vtx f@ f- frot vty f@ f- frot ;
+: fsquare fdup f* ;
+: vdist fsquare fswap fsquare f+ fswap fsquare f+ fsqrt ;
+: >deg 180e f* pi f/ ;
+: zrot ( v f -- ) fdup fcos tcos f! fsin tsin f! >vt
+                  vtx f@ tcos f@ f* vty f@ tsin f@ f* f-
+                  vtx f@ tsin f@ f* vty f@ tcos f@ f* f+ vtz f@ ;
+: dayrot eph-time f@ .5e f+ 1e fmod pi f* 2e f* zrot ;

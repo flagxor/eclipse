@@ -33,14 +33,11 @@ fh @ close-file throw
    then
 ;
 
-: fsquare fdup f* ;
-: fdist fsquare fswap fsquare f+ fswap fsquare f+ fsqrt ;
-
 : main
    2457980.5e
    30 0 do
-     fdup in-time moon eph fdist f. cr
-     1e f+
+     fdup in-time sun earth v- dayrot fdrop fatan2 >deg f. cr
+     .03e f+
    loop
    fdrop
    1024 1024 window
