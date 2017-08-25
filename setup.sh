@@ -15,3 +15,4 @@ done
 curl ftp://ssd.jpl.nasa.gov/pub/eph/planets/ascii/de436/header.436 -O
 curl ftp://ssd.jpl.nasa.gov/pub/eph/planets/ascii/de436/testpo.436 -O
 
+./convert.fs

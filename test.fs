@@ -1,6 +1,7 @@
 #! /usr/bin/env gforth
 
 s" grf.fs" included
+s" eph.fs" included
 
 1024 constant iwidth
 1024 constant iheight
@@ -32,7 +33,16 @@ fh @ close-file throw
    then
 ;
 
+: fsquare fdup f* ;
+: fdist fsquare fswap fsquare f+ fswap fsquare f+ fsqrt ;
+
 : main
+   2457980.5e
+   30 0 do
+     fdup in-time moon eph fdist f. cr
+     1e f+
+   loop
+   fdrop
    1024 1024 window
    begin handle-events again
 ;
