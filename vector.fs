@@ -8,6 +8,7 @@ fvariable tsin fvariable tcos
 : >vt vtz f! vty f! vtx f! ;
 : vt> vtx f@ vty f@ vtz f@ ;
 fvariable scale
+fvariable time
 
 set-current
 
@@ -29,7 +30,9 @@ set-current
                   vtx f@ tsin f@ f* vty f@ tcos f@ f* f+ vtz f@ ;
 
 \ drop this!
-: longlat >vt vtx f@ vty f@ fatan2 pi f/ 2e f/ .5e f+
-              vtz f@ vtx f@ vty f@ 0e vdist2 fsqrt fatan2 pi f/ 2e f/ fnegate .5e f+ ;
+: longlat ( v tm -- x y )
+   time f! >vt
+   vty f@ vtx f@ fatan2 pi f/ 2e f/ .5e f- time f@ f+ 1e fmod
+   vtz f@ vtx f@ vty f@ 0e vdist2 fsqrt fatan2  pi f/ fnegate .5e f+ ;
 
 previous

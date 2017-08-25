@@ -39,8 +39,6 @@ fvariable eph-time
 : in-time ( f -- ) eph-time f! ;
 : +time ( f -- ) eph-time f@ f+ eph-time f! ;
 
-: dayrot eph-time f@ .5e f+ 1e fmod pi f* 2e f* zrot ;
-
 create cheb-components 18 floats allot
 
 fvariable cheb-t

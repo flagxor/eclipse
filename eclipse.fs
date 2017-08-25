@@ -30,25 +30,30 @@ fvariable circle-x
 fvariable circle-y
 fvariable circle-radius2
 variable circle-color
+fvariable fwidth  fvariable fheight
 : draw-circle ( x y r c -- )
    circle-color !
    fsquare circle-radius2 f!
    circle-y f! circle-x f!
+   width s>f 1/f fwidth f!
+   height s>f 1/f fheight f!
    0 0 pixel
    height 0 do
+     i s>f fheight f@ f*
      width 0 do
-       i s>f width s>f f/
-       j s>f height s>f f/ 0e
+       i s>f fwidth f@ f*
+       fover 0e
        circle-x f@ circle-y f@ 0e v- vdist2 circle-radius2 f@ f< if
          circle-color @ over l!
        then
-       i s>f width s>f f/ 1e f-
-       j s>f height s>f f/ 0e
+       i s>f fwidth f@ f* 1e f-
+       fover 0e
        circle-x f@ circle-y f@ 0e v- vdist2 circle-radius2 f@ f< if
          circle-color @ over l!
        then
        4 +
      loop
+     fdrop
    loop
    drop
 ;
@@ -56,17 +61,20 @@ variable circle-color
 hex
 ffffee00 constant orange
 ff777777 constant gray
+ff000000 constant dark
 decimal
 
 : draw
    eph-time f@ fdup f. julian.
    draw-map
-   sun earth v- longlat .02e orange draw-circle
-   moon longlat .01e gray draw-circle
+   sun earth v- eph-time f@ longlat .02e orange draw-circle
+   moon eph-time f@ longlat .01e gray draw-circle
 
    earth moon v+ sun ray
    earth 6371e sphere
-   intersect dup . 0<> if hit v. then
+   intersect dup . 0<> if
+     hit earth v- eph-time f@ longlat .01e dark draw-circle
+   then
 
    cr
    flip
@@ -88,6 +96,8 @@ decimal
    event expose-event = if draw then
    event press-event = if
      last-key 13 = if bye then
+     last-key [char] 1 = if -.001e +time draw then
+     last-key [char] 2 = if .001e +time draw then
      last-key [char] q = if -1e 48e f/ +time draw then
      last-key [char] w = if 1e 48e f/ +time draw then
      last-key [char] a = if -1e +time draw then
