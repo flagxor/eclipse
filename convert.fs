@@ -1,6 +1,6 @@
 #! /usr/bin/env gforth
 
-s" eph.fs" included
+require eph.fs
 
 100 constant max-line
 create line max-line allot

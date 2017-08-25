@@ -1,7 +1,8 @@
 #! /usr/bin/env gforth
 
-s" grf.fs" included
-s" eph.fs" included
+require grf.fs
+require eph.fs
+require ray.fs
 
 1024 constant iwidth
 1024 constant iheight
@@ -58,20 +59,24 @@ ff777777 constant gray
 decimal
 
 : draw
-   eph-time f@ fdup f. julian>dt .
+   eph-time f@ fdup f. julian.
    draw-map
-   sun earth v- dayrot longlat .02e orange draw-circle
-   moon dayrot longlat .01e gray draw-circle
-   sun earth v- dayrot vunit
-   moon dayrot vunit vdot f. cr
+   sun earth v- longlat .02e orange draw-circle
+   moon longlat .01e gray draw-circle
+
+   earth moon v+ sun ray
+   earth 6371e sphere
+   intersect dup . 0<> if hit v. then
+
+   cr
    flip
 ;
 
 : seek ( f -- )
   begin
     fdup +time
-    sun earth v- dayrot vunit
-    moon dayrot vunit vdot
+    sun earth v- vunit
+    moon vunit vdot
     0.9998e f> if
       fdrop exit
     then
