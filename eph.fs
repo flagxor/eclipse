@@ -18,7 +18,7 @@ variable eph-pos
 
 fvariable eph-time
 : find-chunk ( a b f -- n )
-   begin 2dup < while
+   begin
      2dup + 2/ eph-pos !
      eph-time f@ eph-chunk-min f< if
        drop eph-pos @
@@ -26,14 +26,14 @@ fvariable eph-time
        eph-time f@ eph-chunk-max f> if
          nip eph-pos @ 1+ swap
        else
-         2dup eph-pos @ eph-pos @
+         2drop exit
        then
-     then 
-   repeat
-   2drop
+     then
+   again
 ;
 
 : in-time ( f -- ) eph-time f! ;
+: +time ( f -- ) eph-time f@ f+ eph-time f! ;
 
 create cheb-components 18 floats allot
 
@@ -49,7 +49,7 @@ variable cheb-segment
 : cheb-components-init
    1e cheb-tt f@
    eph-coefficients 0 do
-     fover i floats cheb-components + f! 
+     fover i floats cheb-components + f!
      fdup cheb-tt f@ f* 2e f* frot f-
    loop
    fdrop fdrop
@@ -97,11 +97,45 @@ variable cheb-segment
 fvariable vtx fvariable vty fvariable vtz
 fvariable tsin fvariable tcos
 : >vt vtz f! vty f! vtx f! ;
+: vt> vtx f@ vty f@ vtz f@ ;
 : v- >vt vtz f@ f- frot vtx f@ f- frot vty f@ f- frot ;
 : fsquare fdup f* ;
-: vdist fsquare fswap fsquare f+ fswap fsquare f+ fsqrt ;
+: vdist2 fsquare fswap fsquare f+ fswap fsquare f+ ;
+: vscale vtx f@ fover f* vtx f!
+         vty f@ fover f* vty f!
+         vtz f@ fswap f* vtz f! ;
+: vunit >vt vt> vdist2 fsqrt 1e fswap f/ vscale vt> ;
+: vdot >vt vtz f@ f* fswap vty f@ f* f+ fswap vtx f@ f* f+ ;
 : >deg 180e f* pi f/ ;
 : zrot ( v f -- ) fdup fcos tcos f! fsin tsin f! >vt
                   vtx f@ tcos f@ f* vty f@ tsin f@ f* f-
                   vtx f@ tsin f@ f* vty f@ tcos f@ f* f+ vtz f@ ;
 : dayrot eph-time f@ .5e f+ 1e fmod pi f* 2e f* zrot ;
+: longlat >vt vtx f@ vty f@ fatan2 pi f/ 2e f/ .5e f+
+              vty f@ fsquare vtx f@ fsquare f+ fsqrt
+              vtz f@ fatan2 pi f/ 2e f/ 2e f* ;
+
+( Julian Day )
+4716e fconstant jy   3e fconstant jv
+1401e fconstant jj   5e fconstant ju
+2e fconstant jm      153e fconstant js
+12e fconstant jn     2e fconstant jw
+4e fconstant jr       274277e fconstant jBB
+1461e fconstant jp    -38e fconstant jC
+
+fvariable jJJ
+fvariable jf
+fvariable je  fvariable jg  fvariable jh
+fvariable jD  fvariable jMM  fvariable jYY
+: fdiv f/ floor ;
+: julian>dt ( f -- n )
+  jJJ f!
+  jJJ f@ jj f+ 4e jJJ f@ f* jBB f+ 146097e fdiv 3e f* 4e fdiv f+ jC f+ jf f!
+  jr jf f@ f* jv f+ je f!
+  je f@ jp fmod jr fdiv jg f!
+  ju jg f@ f* jw f+ jh f!
+  jh f@ js fmod ju fdiv 1e f+ jD f!
+  jh f@ js fdiv jm f+ jn fmod 1e f+ jMM f!
+  je f@ jp fdiv jy f- jn jm f+ jMM f@ f- jn fdiv f+ jYY f!
+  jYY f@ 10000e f* jMM f@ 100e f* f+ jD f@ f+ f>s
+;

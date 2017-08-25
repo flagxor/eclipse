@@ -13,7 +13,7 @@ create map-image image-size allot
 map-image image-size fh @ read-file throw drop
 fh @ close-file throw
 
-: draw
+: draw-map
    0 0 pixel
    height 0 do
      width 0 do
@@ -22,7 +22,60 @@ fh @ close-file throw
        4 +
      loop
    loop
+   drop
+;
+
+fvariable circle-x
+fvariable circle-y
+fvariable circle-radius2
+variable circle-color
+: draw-circle ( x y r c -- )
+   circle-color !
+   fsquare circle-radius2 f!
+   circle-y f! circle-x f!
+   0 0 pixel
+   height 0 do
+     width 0 do
+       i s>f width s>f f/
+       j s>f height s>f f/ 0e
+       circle-x f@ circle-y f@ 0e v- vdist2 circle-radius2 f@ f< if
+         circle-color @ over l!
+       then
+       i s>f width s>f f/ 1e f-
+       j s>f height s>f f/ 0e
+       circle-x f@ circle-y f@ 0e v- vdist2 circle-radius2 f@ f< if
+         circle-color @ over l!
+       then
+       4 +
+     loop
+   loop
+   drop
+;
+
+hex
+ffffee00 constant orange
+ff777777 constant gray
+decimal
+
+: draw
+   eph-time f@ fdup f. julian>dt .
+   draw-map
+   sun earth v- dayrot longlat .02e orange draw-circle
+   moon dayrot longlat .01e gray draw-circle
+   sun earth v- dayrot vunit
+   moon dayrot vunit vdot f. cr
    flip
+;
+
+: seek ( f -- )
+  begin
+    fdup +time
+    sun earth v- dayrot vunit
+    moon dayrot vunit vdot
+    0.9998e f> if
+      fdrop exit
+    then
+  again
 ;
 
 : handle-events
@@ -30,16 +83,22 @@ fh @ close-file throw
    event expose-event = if draw then
    event press-event = if
      last-key 13 = if bye then
+     last-key [char] q = if -1e 48e f/ +time draw then
+     last-key [char] w = if 1e 48e f/ +time draw then
+     last-key [char] a = if -1e +time draw then
+     last-key [char] s = if 1e +time draw then
+     last-key [char] z = if -7e +time draw then
+     last-key [char] x = if 7e +time draw then
+     last-key [char] c = if -1e 48e f/ seek draw then
+     last-key [char] v = if .1e 48e f/ seek draw then
    then
 ;
 
 : main
-   2457980.5e
-   30 0 do
-     fdup in-time sun earth v- dayrot fdrop fatan2 >deg f. cr
-     .03e f+
-   loop
-   fdrop
+   2457987.208333e in-time
+   \ 2457986.5e in-time
+   \ 2457832.6e in-time ( equinox )
+   \ 2457924.5e in-time ( solstic )
    1024 1024 window
    begin handle-events again
 ;
