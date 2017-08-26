@@ -26,36 +26,24 @@ fh @ close-file throw
    drop
 ;
 
-fvariable circle-x
-fvariable circle-y
-fvariable circle-radius2
 variable circle-color
+variable circle-radius
+variable circle-sx
+variable circle-sy
 fvariable fwidth  fvariable fheight
 : draw-circle ( x y r c -- )
    circle-color !
-   fsquare circle-radius2 f!
-   circle-y f! circle-x f!
-   width s>f 1/f fwidth f!
-   height s>f 1/f fheight f!
-   0 0 pixel
-   height 0 do
-     i s>f fheight f@ f*
-     width 0 do
-       i s>f fwidth f@ f*
-       fover 0e
-       circle-x f@ circle-y f@ 0e v- vdist2 circle-radius2 f@ f< if
-         circle-color @ over l!
-       then
-       i s>f fwidth f@ f* 1e f-
-       fover 0e
-       circle-x f@ circle-y f@ 0e v- vdist2 circle-radius2 f@ f< if
-         circle-color @ over l!
-       then
-       4 +
+   width s>f f* f>s circle-radius !
+   height s>f f* f>s circle-radius @ - circle-sy !
+   width s>f f* f>s circle-radius @ - circle-sx !
+   circle-radius @ 2* 0 ?do
+     circle-sy @ i + height mod
+     circle-radius @ 2* 0 ?do
+       circle-sx @ i + width mod
+       over pixel circle-color @ swap l!
      loop
-     fdrop
+     drop
    loop
-   drop
 ;
 
 hex
@@ -67,13 +55,13 @@ decimal
 : draw
    eph-time f@ fdup f. julian.
    draw-map
-   sun earth v- eph-time f@ longlat .02e orange draw-circle
-   moon eph-time f@ longlat .01e gray draw-circle
+   sun earth v- eph-time f@ longlat .03e orange draw-circle
+   moon eph-time f@ longlat .015e gray draw-circle
 
    earth moon v+ sun ray
-   earth 6371e sphere
-   intersect dup . 0<> if
-     hit earth v- eph-time f@ longlat .01e dark draw-circle
+   earth earth-radius sphere
+   intersect dup . if
+     hit earth v- eph-time f@ longlat .015e dark draw-circle
    then
 
    cr
@@ -83,12 +71,24 @@ decimal
 : seek ( f -- )
   begin
     fdup +time
+    earth moon v+ sun ray
+    earth earth-radius sphere
+  intersect 0= until
+  begin
+    fdup +time
+    earth moon v+ sun ray
+    earth earth-radius sphere
+  intersect until
+     
+(
+  begin
     sun earth v- vunit
     moon vunit vdot
     0.9998e f> if
       fdrop exit
     then
   again
+)
 ;
 
 : handle-events

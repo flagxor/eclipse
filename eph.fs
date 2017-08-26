@@ -4,6 +4,8 @@ require julian.fs
 
 s" data/jpleph.blk" open-blocks
 
+6371e fconstant earth-radius
+
 variable eph-planet
 : eph-offset eph-planet @ 3 cells + @ ;
 : eph-coefficients eph-planet @ 2 cells + @ ;
