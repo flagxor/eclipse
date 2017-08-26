@@ -79,6 +79,7 @@ variable planets-on
    earth earth-radius sphere
    intersect if
      hit earth v- eph-time f@ longlat .015e dark draw-circle
+     hit earth v- eph-time f@ longlat fswap .5e f- pi f* 2e f* >deg f. .5e f- pi f* >deg f.
    then
 
    cr
@@ -105,12 +106,16 @@ variable planets-on
      last-key 13 = if bye then
      last-key [char] 1 = if -.001e +time draw then
      last-key [char] 2 = if .001e +time draw then
+     last-key [char] 3 = if -.00001e +time draw then
+     last-key [char] 4 = if .00001e +time draw then
      last-key [char] q = if -1e 48e f/ +time draw then
      last-key [char] w = if 1e 48e f/ +time draw then
      last-key [char] a = if -1e +time draw then
      last-key [char] s = if 1e +time draw then
      last-key [char] z = if -7e +time draw then
      last-key [char] x = if 7e +time draw then
+     last-key [char] e = if -365e 10e f* +time draw then
+     last-key [char] r = if 365e 10e f* +time draw then
      last-key [char] d = if -365e +time draw then
      last-key [char] f = if 365e +time draw then
      last-key [char] c = if -1e 48e f/ seek draw then
