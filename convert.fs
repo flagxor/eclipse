@@ -50,9 +50,17 @@ variable chunk-offset
   fh @ close-file throw 
 ;
 
+s" data/ascp01550.436" process-file
+s" data/ascp01650.436" process-file
+s" data/ascp01750.436" process-file
 s" data/ascp01850.436" process-file
 s" data/ascp01950.436" process-file
 s" data/ascp02050.436" process-file
+s" data/ascp02150.436" process-file
+s" data/ascp02250.436" process-file
+s" data/ascp02350.436" process-file
+s" data/ascp02450.436" process-file
+s" data/ascp02550.436" process-file
 flush
 
 bye

@@ -30,7 +30,6 @@ variable circle-color
 variable circle-radius
 variable circle-sx
 variable circle-sy
-fvariable fwidth  fvariable fheight
 : draw-circle ( x y r c -- )
    circle-color !
    width s>f f* f>s circle-radius !
@@ -97,16 +96,6 @@ variable planets-on
     earth moon v+ sun ray
     earth earth-radius sphere
   intersect until
-     
-(
-  begin
-    sun earth v- vunit
-    moon vunit vdot
-    0.9998e f> if
-      fdrop exit
-    then
-  again
-)
 ;
 
 : handle-events
@@ -122,6 +111,8 @@ variable planets-on
      last-key [char] s = if 1e +time draw then
      last-key [char] z = if -7e +time draw then
      last-key [char] x = if 7e +time draw then
+     last-key [char] d = if -365e +time draw then
+     last-key [char] f = if 365e +time draw then
      last-key [char] c = if -1e 48e f/ seek draw then
      last-key [char] v = if .1e 48e f/ seek draw then
      last-key [char] p = if planets-on @ 0= planets-on ! draw then
