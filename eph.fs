@@ -94,7 +94,7 @@ variable cheb-segment
  423  6 1 3 planet pluto
  441 13 8 3 planet moon
  753 11 2 3 planet sun
- 819 10 4 2 planet earth-nuations
+ 819 10 4 2 planet earth-nutations
  899 10 4 3 planet moon-librations
 \ 1019  0 0 3 planet moon-angv
 \ 1019  0 0 1 planet tt-tdb
