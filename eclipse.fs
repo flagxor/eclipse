@@ -60,7 +60,7 @@ decimal
 
    earth moon v+ sun ray
    earth earth-radius sphere
-   intersect dup . if
+   intersect if
      hit earth v- eph-time f@ longlat .015e dark draw-circle
    then
 
