@@ -48,15 +48,33 @@ fvariable fwidth  fvariable fheight
 
 hex
 ffffee00 constant orange
-ff777777 constant gray
+ffcccccc constant gray
 ff000000 constant dark
+ff888800 constant dkbrown
+ff00cc00 constant green
+ffcc0000 constant red
+ffcc8888 constant pink
+ffcc88cc constant purple
+ff0000cc constant blue
 decimal
+variable planets-on
 
 : draw
    eph-time f@ fdup f. julian.
    draw-map
    sun earth v- eph-time f@ longlat .03e orange draw-circle
    moon eph-time f@ longlat .015e gray draw-circle
+
+   planets-on @ if
+     mercury eph-time f@ longlat .01e dkbrown draw-circle
+     venus eph-time f@ longlat .01e green draw-circle
+     mars eph-time f@ longlat .01e red draw-circle
+     jupiter eph-time f@ longlat .025e pink draw-circle
+     saturn eph-time f@ longlat .025e purple draw-circle
+     uranus eph-time f@ longlat .02e green draw-circle
+     neptune eph-time f@ longlat .02e blue draw-circle
+     pluto eph-time f@ longlat .01e blue draw-circle
+   then
 
    earth moon v+ sun ray
    earth earth-radius sphere
@@ -106,6 +124,7 @@ decimal
      last-key [char] x = if 7e +time draw then
      last-key [char] c = if -1e 48e f/ seek draw then
      last-key [char] v = if .1e 48e f/ seek draw then
+     last-key [char] p = if planets-on @ 0= planets-on ! draw then
    then
 ;
 
