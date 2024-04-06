@@ -1,5 +1,7 @@
 #! /bin/bash
 
+set -e
+
 if ! dpkg -s imagemagick > /dev/null; then
   sudo apt-get install imagemagick
 fi
@@ -14,5 +16,6 @@ for x in {1550..2550..100}; do
 done
 curl ftp://ssd.jpl.nasa.gov/pub/eph/planets/ascii/de436/header.436 -O
 curl ftp://ssd.jpl.nasa.gov/pub/eph/planets/ascii/de436/testpo.436 -O
+cd ..
 
 ./convert.fs
